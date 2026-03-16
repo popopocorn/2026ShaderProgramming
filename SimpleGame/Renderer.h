@@ -25,15 +25,16 @@ private:
 	void CreateVertexBufferObjects();
 	void GetGLPosition(float x, float y, float *newX, float *newY);
 
-	bool m_Initialized = false;
+	bool			m_Initialized = false;
 	
-	unsigned int m_WindowSizeX = 0;
-	unsigned int m_WindowSizeY = 0;
+	unsigned int	m_WindowSizeX = 0;
+	unsigned int	m_WindowSizeY = 0;
 
-	GLuint m_VBORect = 0;
-	GLuint m_SolidRectShader = 0;
-	GLuint m_TriangleShader = 0;
+	GLuint			m_VBORect = 0;
+	GLuint			m_SolidRectShader = 0;
+	GLuint			m_TriangleShader = 0;
 
-	GLuint m_VBOTriangle = 0;
+	GLuint			m_VBOTriangle = 0;
+	int				m_nVertices = 0;
 };
 

@@ -48,13 +48,21 @@ void Renderer::CreateVertexBufferObjects()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
 
+	float centerX = 0;
+	float centerY = 0;
+	float size = 0.1f;
 	float triangle[]
 		=
 	{
-		0, 0, 0,
-		1, 0, 0,
-		1, 1, 0,
+		centerX - size / 2,	centerY - size / 2,	0,
+		centerX + size / 2,	centerY - size / 2,	0,
+		centerX + size / 2,	centerY + size / 2, 0,
+
+		centerX - size / 2,	centerY - size / 2,	0,
+		centerX + size / 2, centerY + size/2, 0,
+		centerX - size / 2,	centerY + size/2,	0,
 	};
+	m_nVertices = sizeof(triangle) / sizeof(int);
 	glGenBuffers(1, &m_VBOTriangle);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTriangle);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
@@ -194,20 +202,28 @@ void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, flo
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
+float ftime = 0;
 void Renderer::DrawSolidTriangle()
 {
-
+	ftime += 0.00016;
 	//Program select
 	glUseProgram(m_TriangleShader);
 
+	int uTime = glGetUniformLocation(m_TriangleShader, "u_Time");
+	
+
+	glUniform1f(uTime, ftime);
+	
 	int attribPosition = glGetAttribLocation(m_TriangleShader, "a_Position");
 	glEnableVertexAttribArray(attribPosition);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTriangle);
 	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, 
 		sizeof(float) * 3, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	
+
+	glDrawArrays(GL_TRIANGLES, 0, m_nVertices);
 
 	glDisableVertexAttribArray(attribPosition);
 
