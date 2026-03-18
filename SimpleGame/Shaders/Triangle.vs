@@ -1,9 +1,15 @@
 #version 330
 
 in vec3 a_Position;
+in float a_Mass;
+in vec2 a_Velocity;
 
 uniform float u_Time;
 bool u_IsUpward = false;
+
+const float PI = 3.14159265;
+const float G = -9.8;
+
 
 // 1. 가짜 난수 생성기 (Pseudo-Random)
 float hash(float n) {
@@ -35,7 +41,7 @@ void stockMovement()
 
     // 2. Y축 변동성 (주식의 잔파동)
     // 큰 파동(느린 노이즈)과 작은 파동(빠른 노이즈)을 섞어 진짜 주식처럼 불규칙하게 만듭니다.
-    float volatility = noise(activeTime * 5.0) * 0.3 + noise(activeTime * 20.0) * 0.1;
+    float volatility = noise(moveX * 5.0) * 0.3 + noise(moveX * 20.0) * 0.1;
 
     // 3. Y축 트렌드 (상승/하락 방향성)
     float trendSlope = 0.5; // 전체적인 상승/하락의 가파른 정도
@@ -48,7 +54,21 @@ void stockMovement()
     gl_Position = newPosition;
 }
 
+void falling()
+{
+   
+    float t = mod(u_Time, 1.0);
+    //float t = u_Time;
+    float tt = t*t;
+
+    vec4 newPos = vec4(a_Position, 1);
+
+    newPos.x+= a_Velocity.x*t;
+    newPos.y+= a_Velocity.y*t + 0.5 * G * tt;
+    gl_Position = newPos;
+}
+
 void main()
 {
-    stockMovement();
+    falling();
 }

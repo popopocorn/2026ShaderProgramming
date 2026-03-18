@@ -7,6 +7,15 @@
 
 #include "Dependencies\glew.h"
 
+struct Vertex {
+	float x;
+	float y;
+	float z;
+	float mass = 1;
+	float vx = 0.5;
+	float vy = 1;
+};
+
 class Renderer
 {
 public:
@@ -24,6 +33,7 @@ private:
 	GLuint CompileShaders(const char* filenameVS, const char* filenameFS);
 	void CreateVertexBufferObjects();
 	void GetGLPosition(float x, float y, float *newX, float *newY);
+	void GenerateParticle(size_t particleSize);
 
 	bool			m_Initialized = false;
 	
@@ -35,6 +45,7 @@ private:
 	GLuint			m_TriangleShader = 0;
 
 	GLuint			m_VBOTriangle = 0;
+	GLuint			m_VBOParticle = 0;
 	int				m_nVertices = 0;
 };
 

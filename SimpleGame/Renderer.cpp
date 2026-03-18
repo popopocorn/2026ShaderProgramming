@@ -20,10 +20,10 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	//Load shaders
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	m_TriangleShader = CompileShaders("./Shaders/Triangle.vs", "./Shaders/Triangle.fs");
-	
+	srand(time(0));
 	//Create VBOs
 	CreateVertexBufferObjects();
-
+	GenerateParticle(100);
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
 	{
 		m_Initialized = true;
@@ -51,22 +51,54 @@ void Renderer::CreateVertexBufferObjects()
 	float centerX = 0;
 	float centerY = 0;
 	float size = 0.1f;
+	float mass = 1;
+	float vx = 0.5, vy = 1;
 	float triangle[]
 		=
 	{
-		centerX - size / 2,	centerY - size / 2,	0,
-		centerX + size / 2,	centerY - size / 2,	0,
-		centerX + size / 2,	centerY + size / 2, 0,
+		centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy,
+		centerX + size / 2,	centerY - size / 2,	0, mass, vx, vy,
+		centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy,
 
-		centerX - size / 2,	centerY - size / 2,	0,
-		centerX + size / 2, centerY + size/2, 0,
-		centerX - size / 2,	centerY + size/2,	0,
+		centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy,
+		centerX + size / 2, centerY + size / 2, 0, mass, vx, vy,
+		centerX - size / 2,	centerY + size / 2,	0, mass, vx, vy,
 	};
-	m_nVertices = sizeof(triangle) / sizeof(int);
+	m_nVertices = sizeof(triangle) / (sizeof(float) * 4);
 	glGenBuffers(1, &m_VBOTriangle);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTriangle);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
 
+}
+
+void Renderer::GenerateParticle(size_t particleSize)
+{
+	float centerX = 0;
+	float centerY = 0;
+	float size = 0.1f;
+	float mass = 1;
+	
+	//float vx = 0.5, vy = 1.0f;
+	Vertex* Particles = new Vertex[particleSize * 6];
+	
+	for (int i = 0; i < particleSize; ++i)
+	{
+		float vx = (std::rand() % 9) / 10.0f - 0.5f, vy = (std::rand() % 9) / 10.0f - 0.5f;
+		Particles[i * 6]	 = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy };
+		Particles[i * 6 + 1] = { centerX + size / 2,	centerY - size / 2,	0, mass, vx, vy };
+		Particles[i * 6 + 2] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy };
+		Particles[i * 6 + 3] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy };
+		Particles[i * 6 + 4] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy };
+		Particles[i * 6 + 5] = { centerX - size / 2,	centerY + size / 2,	0, mass, vx, vy };
+
+	}
+
+	m_nVertices = particleSize * 6;
+	glGenBuffers(1, &m_VBOParticle);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOParticle);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * particleSize * 6, Particles, GL_STATIC_DRAW);
+
+	delete[] Particles;
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -216,10 +248,38 @@ void Renderer::DrawSolidTriangle()
 	
 	int attribPosition = glGetAttribLocation(m_TriangleShader, "a_Position");
 	glEnableVertexAttribArray(attribPosition);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTriangle);
-	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, 
-		sizeof(float) * 3, 0);
+	int mass = glGetAttribLocation(m_TriangleShader, "a_Mass");
+	glEnableVertexAttribArray(mass);
+	int v = glGetAttribLocation(m_TriangleShader, "a_Velocity");
+	glEnableVertexAttribArray(v);
 
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOParticle);
+	glVertexAttribPointer(
+		attribPosition, 
+		3, 
+		GL_FLOAT, 
+		GL_FALSE, 
+		sizeof(float) * 6,
+		0
+	);
+
+	glVertexAttribPointer(
+		mass, 
+		1, 
+		GL_FLOAT, 
+		GL_FALSE, 
+		sizeof(float) * 6, 
+		(GLvoid*)(sizeof(float) * 3)
+	);
+
+	glVertexAttribPointer(
+		v, 
+		2, 
+		GL_FLOAT, 
+		GL_FALSE, 
+		sizeof(float) * 6, 
+		(GLvoid*)(sizeof(float) * 4)
+	);
 
 	
 
@@ -235,3 +295,5 @@ void Renderer::GetGLPosition(float x, float y, float *newX, float *newY)
 	*newX = x * 2.f / m_WindowSizeX;
 	*newY = y * 2.f / m_WindowSizeY;
 }
+
+
