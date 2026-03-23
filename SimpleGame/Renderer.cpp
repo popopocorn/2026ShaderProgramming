@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "Renderer.h"
+std::random_device rd;
+std::default_random_engine dre(rd());
+
+std::uniform_real_distribution<float> urd(-2.0f, 2.0f);
 
 Renderer::Renderer(int windowSizeX, int windowSizeY)
 {
@@ -20,8 +24,7 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	//Load shaders
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	m_TriangleShader = CompileShaders("./Shaders/Triangle.vs", "./Shaders/Triangle.fs");
-	srand(time(0));
-	//Create VBOs
+
 	CreateVertexBufferObjects();
 	GenerateParticle(100);
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
@@ -83,7 +86,7 @@ void Renderer::GenerateParticle(size_t particleSize)
 	
 	for (int i = 0; i < particleSize; ++i)
 	{
-		float vx = (std::rand() % 9) / 10.0f - 0.5f, vy = (std::rand() % 9) / 10.0f - 0.5f;
+		float vx = urd(dre), vy = urd(dre);
 		Particles[i * 6]	 = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy };
 		Particles[i * 6 + 1] = { centerX + size / 2,	centerY - size / 2,	0, mass, vx, vy };
 		Particles[i * 6 + 2] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy };
@@ -237,7 +240,7 @@ void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, flo
 float ftime = 0;
 void Renderer::DrawSolidTriangle()
 {
-	ftime += 0.00016;
+	ftime += 0.00064;
 	//Program select
 	glUseProgram(m_TriangleShader);
 
