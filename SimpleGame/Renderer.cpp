@@ -3,7 +3,7 @@
 std::random_device rd;
 std::default_random_engine dre(rd());
 
-std::uniform_real_distribution<float> urd(-2.0f, 2.0f);
+std::uniform_real_distribution<float> urd(-1.0f, 1.0f);
 
 Renderer::Renderer(int windowSizeX, int windowSizeY)
 {
@@ -26,7 +26,7 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_TriangleShader = CompileShaders("./Shaders/Triangle.vs", "./Shaders/Triangle.fs");
 
 	CreateVertexBufferObjects();
-	GenerateParticle(100);
+	GenerateParticle(2500);
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
 	{
 		m_Initialized = true;
@@ -78,7 +78,7 @@ void Renderer::GenerateParticle(size_t particleSize)
 {
 	float centerX = 0;
 	float centerY = 0;
-	float size = 0.1f;
+	float size = 0.025f;
 	float mass = 1;
 	
 	//float vx = 0.5, vy = 1.0f;
@@ -86,13 +86,16 @@ void Renderer::GenerateParticle(size_t particleSize)
 	
 	for (int i = 0; i < particleSize; ++i)
 	{
-		float vx = urd(dre), vy = urd(dre);
-		Particles[i * 6]	 = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy };
-		Particles[i * 6 + 1] = { centerX + size / 2,	centerY - size / 2,	0, mass, vx, vy };
-		Particles[i * 6 + 2] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy };
-		Particles[i * 6 + 3] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy };
-		Particles[i * 6 + 4] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy };
-		Particles[i * 6 + 5] = { centerX - size / 2,	centerY + size / 2,	0, mass, vx, vy };
+		float vx = urd(dre) * 2, vy = urd(dre) * 2;
+		float rv = urd(dre);
+		float rv2 = urd(dre);
+		Vertex* v = &Particles[i * 6];
+		v[0] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2 };
+		v[1] = { centerX + size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2 };
+		v[2] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy, rv, rv2 };
+		v[3] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2 };
+		v[4] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy, rv, rv2 };
+		v[5] = { centerX - size / 2,	centerY + size / 2,	0, mass, vx, vy, rv, rv2 };
 
 	}
 
@@ -240,7 +243,7 @@ void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, flo
 float ftime = 0;
 void Renderer::DrawSolidTriangle()
 {
-	ftime += 0.00064;
+	ftime += 0.00016;
 	//Program select
 	glUseProgram(m_TriangleShader);
 
@@ -251,10 +254,21 @@ void Renderer::DrawSolidTriangle()
 	
 	int attribPosition = glGetAttribLocation(m_TriangleShader, "a_Position");
 	glEnableVertexAttribArray(attribPosition);
+	
 	int mass = glGetAttribLocation(m_TriangleShader, "a_Mass");
 	glEnableVertexAttribArray(mass);
+	
+	
 	int v = glGetAttribLocation(m_TriangleShader, "a_Velocity");
 	glEnableVertexAttribArray(v);
+
+	int rv = glGetAttribLocation(m_TriangleShader, "a_Rv");
+	glEnableVertexAttribArray(rv);
+
+	int rv2 = glGetAttribLocation(m_TriangleShader, "a_Rv2");
+	glEnableVertexAttribArray(rv2);
+
+
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOParticle);
 	glVertexAttribPointer(
@@ -262,7 +276,7 @@ void Renderer::DrawSolidTriangle()
 		3, 
 		GL_FLOAT, 
 		GL_FALSE, 
-		sizeof(float) * 6,
+		sizeof(Vertex),
 		0
 	);
 
@@ -271,7 +285,7 @@ void Renderer::DrawSolidTriangle()
 		1, 
 		GL_FLOAT, 
 		GL_FALSE, 
-		sizeof(float) * 6, 
+		sizeof(Vertex),
 		(GLvoid*)(sizeof(float) * 3)
 	);
 
@@ -280,11 +294,28 @@ void Renderer::DrawSolidTriangle()
 		2, 
 		GL_FLOAT, 
 		GL_FALSE, 
-		sizeof(float) * 6, 
+		sizeof(Vertex),
 		(GLvoid*)(sizeof(float) * 4)
 	);
 
-	
+	glVertexAttribPointer(
+		rv,
+		1,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(Vertex),
+		(GLvoid*)(sizeof(float) * 6)
+	);
+	glVertexAttribPointer(
+		rv2,
+		1,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(Vertex),
+		(GLvoid*)(sizeof(float) * 7)
+	);
+
+
 
 	glDrawArrays(GL_TRIANGLES, 0, m_nVertices);
 

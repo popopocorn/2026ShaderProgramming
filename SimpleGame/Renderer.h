@@ -11,9 +11,11 @@ struct Vertex {
 	float x;
 	float y;
 	float z;
-	float mass = 1;
-	float vx = 0.5;
-	float vy = 1;
+	float mass  =1;
+	float vx;
+	float vy;
+	float Rv;
+	float Rv2;
 };
 
 class Renderer
