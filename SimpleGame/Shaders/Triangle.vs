@@ -7,6 +7,8 @@ in float a_Rv;
 in float a_Rv2;
 in float a_LifeTime;
 
+out float v_Gray;
+
 uniform float u_Time;
 
 const float PI = 3.14159265;
@@ -27,8 +29,9 @@ void sin0()
         //끝에서 모이게
         //newPos.y += (range * (1-newTime)) * sin(newTime * a_Rv2 * PI * 2);
         //끝에서 퍼지게
-        newPos.y += (range * (1-newTime)) * sin(newTime * a_Rv2 * PI * 2);
+        newPos.y += (range * newTime) * sin(newTime * a_Rv2 * PI * 2);
         gl_Position = newPos;
+        v_Gray = 
     }
     else
     {
@@ -45,6 +48,7 @@ void sin1()
     if(aliveTime < 0.0)
     {
         gl_Position = vec4(-1000.0, -1000.0, 0.0, 1.0);
+        v_Gray = 0.0;
         return;
     }
 
@@ -96,6 +100,8 @@ void sin1()
     newPos.x += newTime; 
 
     gl_Position = newPos;
+
+    v_Gray = amplitude;
 
     // (선택사항) Fragment Shader로 투명도를 넘겨 끝에서 부드럽게 사라지게 합니다.
     // v_Alpha = 1.0 - newTime; 
