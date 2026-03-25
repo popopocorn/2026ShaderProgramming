@@ -26,7 +26,7 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_TriangleShader = CompileShaders("./Shaders/Triangle.vs", "./Shaders/Triangle.fs");
 
 	CreateVertexBufferObjects();
-	GenerateParticle(2500);
+	GenerateParticle(1000);
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
 	{
 		m_Initialized = true;
@@ -89,13 +89,14 @@ void Renderer::GenerateParticle(size_t particleSize)
 		float vx = urd(dre) * 2, vy = urd(dre) * 2;
 		float rv = urd(dre);
 		float rv2 = urd(dre);
+		float lifetime = (urd(dre) + 1.0f)/2.0f;
 		Vertex* v = &Particles[i * 6];
-		v[0] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2 };
-		v[1] = { centerX + size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2 };
-		v[2] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy, rv, rv2 };
-		v[3] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2 };
-		v[4] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy, rv, rv2 };
-		v[5] = { centerX - size / 2,	centerY + size / 2,	0, mass, vx, vy, rv, rv2 };
+		v[0] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2, lifetime };
+		v[1] = { centerX + size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2, lifetime };
+		v[2] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy, rv, rv2, lifetime };
+		v[3] = { centerX - size / 2,	centerY - size / 2,	0, mass, vx, vy, rv, rv2, lifetime };
+		v[4] = { centerX + size / 2,	centerY + size / 2, 0, mass, vx, vy, rv, rv2, lifetime };
+		v[5] = { centerX - size / 2,	centerY + size / 2,	0, mass, vx, vy, rv, rv2, lifetime };
 
 	}
 
@@ -268,7 +269,8 @@ void Renderer::DrawSolidTriangle()
 	int rv2 = glGetAttribLocation(m_TriangleShader, "a_Rv2");
 	glEnableVertexAttribArray(rv2);
 
-
+	int lt = glGetAttribLocation(m_TriangleShader, "a_LifeTime");
+	glEnableVertexAttribArray(lt);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOParticle);
 	glVertexAttribPointer(
@@ -313,6 +315,15 @@ void Renderer::DrawSolidTriangle()
 		GL_FALSE,
 		sizeof(Vertex),
 		(GLvoid*)(sizeof(float) * 7)
+	);
+
+	glVertexAttribPointer(
+		lt,
+		1,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(Vertex),
+		(GLvoid*)(sizeof(float) * 8)
 	);
 
 

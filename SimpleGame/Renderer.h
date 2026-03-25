@@ -16,6 +16,7 @@ struct Vertex {
 	float vy;
 	float Rv;
 	float Rv2;
+	float lifetime;
 };
 
 class Renderer
