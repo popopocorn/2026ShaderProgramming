@@ -17,16 +17,17 @@ const float G = -9.8;
 
 void sin0()
 {
-    float startTime = (a_Rv + 1.0f) / 2.0f;
-
-    float newTime = u_Time - startTime;
-    newTime *= (a_Rv2 + 1.0f);
+    float newTime = u_Time - a_LifeTime;
+    float range = (a_Rv +1.0f)/2.0f * 0.2f;
     newTime = mod(newTime, 1.0f);
     if(newTime > 0.0f){
         vec4 newPos = vec4(a_Position, 1.0f);
         newPos.xy *= a_Rv2;
         newPos.x += newTime;
-        newPos.y += a_Rv * sin(newTime * 2 * PI);
+        //끝에서 모이게
+        //newPos.y += (range * (1-newTime)) * sin(newTime * a_Rv2 * PI * 2);
+        //끝에서 퍼지게
+        newPos.y += (range * (1-newTime)) * sin(newTime * a_Rv2 * PI * 2);
         gl_Position = newPos;
     }
     else
