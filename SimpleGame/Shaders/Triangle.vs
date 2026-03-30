@@ -103,7 +103,7 @@ void falling()
         float lifeTime = 0.5 + a_LifeTime * lifeScale;
         float t = lifeTime * fract(newTime/lifeTime);
         float tt = t * t;
-
+        
         vec4 newPos = vec4(a_Position, 1.0);
         newPos.xy *= a_Rv2;
         newPos.x+= a_Velocity.x * t + sin(random(a_Rv2) * 2 * PI);

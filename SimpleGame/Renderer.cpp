@@ -24,9 +24,11 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	//Load shaders
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	m_TriangleShader = CompileShaders("./Shaders/Triangle.vs", "./Shaders/Triangle.fs");
+	m_FsShader = CompileShaders("./Shaders/fs.vs", "./Shaders/fs.fs");
 
 	CreateVertexBufferObjects();
 	GenerateParticle(1000);
+	GenerateFS();
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
 	{
 		m_Initialized = true;
@@ -50,10 +52,9 @@ void Renderer::CreateVertexBufferObjects()
 	glGenBuffers(1, &m_VBORect);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
-
 	float centerX = 0;
 	float centerY = 0;
-	float size = 0.1f;
+	float size = 2;
 	float mass = 1;
 	float vx = 0.5, vy = 1;
 	float triangle[]
@@ -106,6 +107,23 @@ void Renderer::GenerateParticle(size_t particleSize)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * particleSize * 6, Particles, GL_STATIC_DRAW);
 
 	delete[] Particles;
+}
+
+void Renderer::GenerateFS()
+{
+	FSVertex Rect[6];
+
+	Rect[0] = { -1,	-1,	0, 0, 0,};
+	Rect[1] = { 1,	-1,	0, 1, 0,};
+	Rect[2] = { 1,	1, 0, 1, 1,};
+	Rect[3] = { -1,	-1,	0,0, 0, };
+	Rect[4] = { 1,	1, 0, 1, 1, };
+	Rect[5] = { -1,	1,	0,0, 1, };
+
+
+	glGenBuffers(1, &m_VBOFS);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFS);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(FSVertex) * 6, Rect, GL_STATIC_DRAW);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -333,6 +351,52 @@ void Renderer::DrawSolidTriangle()
 	glDisableVertexAttribArray(attribPosition);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Renderer::DrawFS()
+{
+	ftime += 0.00016;
+	//Program select
+	glUseProgram(m_FsShader);
+
+	int uTime = glGetUniformLocation(m_FsShader, "u_Time");
+
+
+	glUniform1f(uTime, ftime);
+
+	int attribPosition = glGetAttribLocation(m_FsShader, "a_Position");
+	glEnableVertexAttribArray(attribPosition);
+
+	int uv = glGetAttribLocation(m_FsShader, "a_UV");
+	glEnableVertexAttribArray(uv);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFS);
+	glVertexAttribPointer(
+		attribPosition,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(FSVertex),
+		0
+	);
+
+	glVertexAttribPointer(
+		uv,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(FSVertex),
+		(GLvoid*)(sizeof(float)*3)
+	);
+
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(attribPosition);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void Renderer::GetGLPosition(float x, float y, float *newX, float *newY)
