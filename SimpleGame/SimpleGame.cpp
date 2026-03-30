@@ -46,7 +46,9 @@ void KeyInput(unsigned char key, int x, int y)
 void SpecialKeyInput(int key, int x, int y)
 {
 	RenderScene();
+
 }
+
 
 int main(int argc, char **argv)
 {
@@ -83,7 +85,6 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	delete g_Renderer;
-
     return 0;
 }
 
