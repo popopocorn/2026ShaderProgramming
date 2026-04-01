@@ -19,7 +19,7 @@ Renderer *g_Renderer = NULL;
 
 void RenderScene(void)
 {
-	glClearColor(0.0f, 0.30f, 0.30f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 
