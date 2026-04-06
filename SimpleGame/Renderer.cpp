@@ -4,6 +4,7 @@ std::random_device rd;
 std::default_random_engine dre(rd());
 
 std::uniform_real_distribution<float> urd(-1.0f, 1.0f);
+std::uniform_real_distribution<float> urdzero(0.0f, 1.0f);
 
 Renderer::Renderer(int windowSizeX, int windowSizeY)
 {
@@ -29,6 +30,18 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	CreateVertexBufferObjects();
 	GenerateParticle(1000);
 	GenerateFS();
+
+	for (Dropinfo& d : drops)
+	{
+		d = {
+			urd(dre), 
+			urd(dre), 
+			urdzero(dre)*3, 
+			urdzero(dre)
+		};
+	}
+
+
 	if (m_SolidRectShader > 0 && m_VBORect > 0)
 	{
 		m_Initialized = true;
@@ -360,9 +373,13 @@ void Renderer::DrawFS()
 	glUseProgram(m_FsShader);
 
 	int uTime = glGetUniformLocation(m_FsShader, "u_Time");
-
-
 	glUniform1f(uTime, ftime);
+
+	int DropInfo = glGetUniformLocation(m_FsShader, "u_DropInfo");
+	glUniform4fv(DropInfo, drops.size(), reinterpret_cast<const float*>(drops.data()));
+
+
+
 
 	int attribPosition = glGetAttribLocation(m_FsShader, "a_Position");
 	glEnableVertexAttribArray(attribPosition);

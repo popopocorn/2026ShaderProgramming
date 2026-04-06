@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include<array>
 
 #include "Dependencies\glew.h"
 
@@ -27,6 +28,13 @@ struct FSVertex {
 	float ty;
 };
 
+struct Dropinfo {
+	float x;
+	float y;
+	float start;
+	float life;
+};
+
 class Renderer
 {
 public:
@@ -46,6 +54,7 @@ private:
 	void GetGLPosition(float x, float y, float *newX, float *newY);
 	void GenerateParticle(size_t particleSize);
 	void GenerateFS();
+	
 
 	bool			m_Initialized = false;
 	
@@ -64,5 +73,7 @@ private:
 	int				m_nVertices = 0;
 
 	GLuint			m_VBOFS = 0;
+
+	std::array<Dropinfo, 1000> drops;
 };
 
