@@ -5,8 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include<array>
+#include<assert.h>
 
 #include "Dependencies\glew.h"
+#include"LoadPng.h"
 
 struct Vertex {
 	float x;
@@ -54,7 +56,7 @@ private:
 	void GetGLPosition(float x, float y, float *newX, float *newY);
 	void GenerateParticle(size_t particleSize);
 	void GenerateFS();
-	
+	GLuint CreatePngTexture(char* filePath, GLuint samplingMethod);
 
 	bool			m_Initialized = false;
 	
