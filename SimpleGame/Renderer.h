@@ -4,17 +4,17 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include<array>
-#include<assert.h>
+#include <array>
+#include <assert.h>
 
 #include "Dependencies\glew.h"
-#include"LoadPng.h"
+#include "LoadPng.h"
 
 struct Vertex {
 	float x;
 	float y;
 	float z;
-	float mass  =1;
+	float mass = 1;
 	float vx;
 	float vy;
 	float Rv;
@@ -47,6 +47,7 @@ public:
 	void DrawSolidRect(float x, float y, float z, float size, float r, float g, float b, float a);
 	void DrawSolidTriangle();
 	void DrawFS();
+	void DrawTex();
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(const char* filename, std::string *target);
@@ -56,7 +57,7 @@ private:
 	void GetGLPosition(float x, float y, float *newX, float *newY);
 	void GenerateParticle(size_t particleSize);
 	void GenerateFS();
-	GLuint CreatePngTexture(char* filePath, GLuint samplingMethod);
+	GLuint CreatePngTexture(const char* filePath, GLuint samplingMethod);
 
 	bool			m_Initialized = false;
 	
@@ -67,6 +68,7 @@ private:
 	GLuint			m_SolidRectShader = 0;
 	GLuint			m_TriangleShader = 0;
 	GLuint			m_FsShader = 0;
+	GLuint			m_TxShader = 0;
 
 
 
@@ -77,5 +79,11 @@ private:
 	GLuint			m_VBOFS = 0;
 
 	std::array<Dropinfo, 1000> drops;
+
+	GLuint sampler = 0;
+	GLuint m_RgbTexture = 0;
+	std::array<GLuint, 10> m_NumTexture;
+	GLuint m_NumsTexture = 0;
+
 };
 

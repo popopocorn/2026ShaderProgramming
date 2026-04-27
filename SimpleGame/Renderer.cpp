@@ -26,6 +26,7 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	m_TriangleShader = CompileShaders("./Shaders/Triangle.vs", "./Shaders/Triangle.fs");
 	m_FsShader = CompileShaders("./Shaders/fs.vs", "./Shaders/fs.fs");
+	m_TxShader = CompileShaders("./Shaders/texture.vs", "./Shaders/texture.fs");
 
 	CreateVertexBufferObjects();
 	GenerateParticle(1000);
@@ -46,6 +47,8 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	{
 		m_Initialized = true;
 	}
+	
+	m_RgbTexture = CreatePngTexture("./textures/rgb.png", GL_LINEAR);
 }
 
 bool Renderer::IsInitialized()
@@ -126,12 +129,12 @@ void Renderer::GenerateFS()
 {
 	FSVertex Rect[6];
 
-	Rect[0] = { -1,	-1,	0, 0, 0,};
-	Rect[1] = { 1,	-1,	0, 1, 0,};
-	Rect[2] = { 1,	1, 0, 1, 1,};
-	Rect[3] = { -1,	-1,	0,0, 0, };
-	Rect[4] = { 1,	1, 0, 1, 1, };
-	Rect[5] = { -1,	1,	0,0, 1, };
+	Rect[0] = { -1,	-1,	0, 0, 1,};
+	Rect[1] = { 1,	-1,	0, 1, 1,};
+	Rect[2] = { 1,	1, 0, 1, 0,};
+	Rect[3] = { -1,	-1,	0,0, 1, };
+	Rect[4] = { 1,	1, 0, 1, 0, };
+	Rect[5] = { -1,	1,	0,0, 0, };
 
 
 	glGenBuffers(1, &m_VBOFS);
@@ -139,7 +142,7 @@ void Renderer::GenerateFS()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(FSVertex) * 6, Rect, GL_STATIC_DRAW);
 }
 
-GLuint Renderer::CreatePngTexture(char* filePath, GLuint samplingMethod)
+GLuint Renderer::CreatePngTexture(const char* filePath, GLuint samplingMethod)
 {
 	//Load Png
 
@@ -448,6 +451,51 @@ void Renderer::DrawFS()
 		GL_FALSE,
 		sizeof(FSVertex),
 		(GLvoid*)(sizeof(float)*3)
+	);
+
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(attribPosition);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+void Renderer::DrawTex()
+{
+	ftime += 0.00016;
+	//Program select
+	glUseProgram(m_TxShader);
+
+	int attribPosition = glGetAttribLocation(m_TxShader, "a_Position");
+	glEnableVertexAttribArray(attribPosition);
+
+	int uv = glGetAttribLocation(m_TxShader, "a_UV");
+	glEnableVertexAttribArray(uv);
+
+	
+	glUniform1i(sampler, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_RgbTexture);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFS);
+	glVertexAttribPointer(
+		attribPosition,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(FSVertex),
+		0
+	);
+
+	glVertexAttribPointer(
+		uv,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(FSVertex),
+		(GLvoid*)(sizeof(float) * 3)
 	);
 
 
