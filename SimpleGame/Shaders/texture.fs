@@ -15,14 +15,28 @@ void texture01()
 	float ty = UV.y/3.0;
 	
 	float offsetX = 0;
-	float offsetY= (2.0 - floor(UV.x*3.0))/3;
+	float offsetY= (2 - floor(UV.x*3.0))/3;
 
 	vec2 newTex = vec2(tx, ty + offsetY);
 	FragColor = texture(uTexSampler, newTex);
 }
 
+void texture02()
+{
+	
+	float tx = fract(UV.x*3.0);
+	float ty = UV.y/3.0;
+	
+	float offsetX = 0;
+	float offsetY= floor(UV.x*3.0)/3;
+
+	vec2 newTex = vec2(tx, ty + offsetY);
+	FragColor = texture(uTexSampler, newTex);
+}
+
+
 void main()
 {
-	texture01();
+	texture02();
 	
 }
