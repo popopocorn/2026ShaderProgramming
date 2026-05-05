@@ -48,7 +48,18 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 		m_Initialized = true;
 	}
 	
+	// slot0
 	m_RgbTexture = CreatePngTexture("./textures/rgb.png", GL_LINEAR);
+
+	// slot1
+	m_NumsTexture = CreatePngTexture("./textures/Numbers.png", GL_LINEAR);
+	for (int i = 0; i < 10; ++i)
+	{
+		//slot 2~11;
+		std::string path = "./textures/" + std::to_string(i) + ".png";
+		m_NumTexture[i] = CreatePngTexture(path.c_str(), GL_LINEAR);
+	}
+
 }
 
 bool Renderer::IsInitialized()
@@ -468,16 +479,32 @@ void Renderer::DrawTex()
 	//Program select
 	glUseProgram(m_TxShader);
 
+
 	int attribPosition = glGetAttribLocation(m_TxShader, "a_Position");
 	glEnableVertexAttribArray(attribPosition);
+
+	int uTime = glGetUniformLocation(m_TxShader, "u_Time");
+	glUniform1f(uTime, ftime);
 
 	int uv = glGetAttribLocation(m_TxShader, "a_UV");
 	glEnableVertexAttribArray(uv);
 
-	
-	glUniform1i(sampler, 0);
+	sampler = glGetUniformLocation(m_TxShader, "uTexSampler");
+	int sampler2 = glGetUniformLocation(m_TxShader, "u_CurNumTex");
+
+	glUniform1i(sampler2, 1);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_RgbTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_NumsTexture);
+
+	for (int i = 0; i < 10; ++i)
+	{
+
+	}
+
+
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOFS);
 	glVertexAttribPointer(

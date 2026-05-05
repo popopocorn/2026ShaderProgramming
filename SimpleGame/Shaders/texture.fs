@@ -1,7 +1,9 @@
 #version 330
 
 uniform sampler2D uTexSampler;
+uniform sampler2D u_CurNumTex;
 layout(location=0) out vec4 FragColor;
+uniform float u_Time;
 
 in vec2 UV;
 
@@ -34,9 +36,45 @@ void texture02()
 	FragColor = texture(uTexSampler, newTex);
 }
 
+void brick()
+{
+	float resolX = 2; 
+	float resolY = 2;
+	float shear = 0.5 * u_Time;
+	
+	float offsetX = fract(ceil(UV.y*resolY)*shear);
+	float offsetY = 0;
+
+
+	float tx = fract(UV.x * resolX + offsetX);
+	float ty = fract(UV.y * resolY + offsetY);
+
+	
+
+	FragColor = texture(uTexSampler, vec2(tx, ty));
+
+
+}
+
+void brick2()
+{
+	float tx = UV.x * 2;
+	float ty = UV.y * 2;
+
+	if(UV.x>0.5)
+	{
+		ty -= 0.5;
+	}
+
+	FragColor = texture(uTexSampler, vec2(tx, ty));
+
+
+}
+
+
 
 void main()
 {
-	texture02();
+	brick();
 	
 }
