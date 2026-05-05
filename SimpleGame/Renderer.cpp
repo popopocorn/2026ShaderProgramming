@@ -487,18 +487,22 @@ void Renderer::DrawTex()
 	int uTime = glGetUniformLocation(m_TxShader, "u_Time");
 	glUniform1f(uTime, ftime);
 
+	Sleep(1000);
+	static int cur = 0;
+
+	int idx = glGetUniformLocation(m_TxShader, "u_Idx");
+	glUniform1i(idx, cur);
+
+	++cur;
+	if (cur > 9)cur = 0;
+
 	int uv = glGetAttribLocation(m_TxShader, "a_UV");
 	glEnableVertexAttribArray(uv);
 
 	sampler = glGetUniformLocation(m_TxShader, "uTexSampler");
 	int sampler2 = glGetUniformLocation(m_TxShader, "u_CurNumTex");
 	
-	Sleep(1000);
 
-	static int curNum = 2;
-	++curNum;
-	if (curNum > 11)
-		curNum = 2;
 	glUniform1i(sampler, 1);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_RgbTexture);
