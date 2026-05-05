@@ -71,10 +71,23 @@ void brick2()
 
 }
 
+void Num()
+{
+	float tx = UV.x;
+	float ty = UV.y;
 
+	
+	float offsetX = 0;
+	float offsetY = 0;
+
+
+	FragColor = texture(uTexSampler, vec2(tx, ty));
+
+
+}
 
 void main()
 {
-	brick();
+	Num();
 	
 }

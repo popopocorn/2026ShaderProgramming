@@ -472,6 +472,7 @@ void Renderer::DrawFS()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
+#include<Windows.h>
 
 void Renderer::DrawTex()
 {
@@ -491,17 +492,26 @@ void Renderer::DrawTex()
 
 	sampler = glGetUniformLocation(m_TxShader, "uTexSampler");
 	int sampler2 = glGetUniformLocation(m_TxShader, "u_CurNumTex");
+	
+	Sleep(1000);
 
-	glUniform1i(sampler2, 1);
+	static int curNum = 2;
+	++curNum;
+	if (curNum > 11)
+		curNum = 2;
+	glUniform1i(sampler, 1);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_RgbTexture);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_NumsTexture);
 
+	auto tex = GL_TEXTURE1;
+
 	for (int i = 0; i < 10; ++i)
 	{
-
+		glActiveTexture(++tex);
+		glBindTexture(GL_TEXTURE_2D, m_NumTexture[i]);
 	}
 
 
