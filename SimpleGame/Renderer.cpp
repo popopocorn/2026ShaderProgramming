@@ -494,7 +494,7 @@ void Renderer::DrawTex()
 	glUniform1i(idx, cur);
 
 	++cur;
-	if (cur > 9)cur = 0;
+	if (cur > 99)cur = 0;
 
 	int uv = glGetAttribLocation(m_TxShader, "a_UV");
 	glEnableVertexAttribArray(uv);
@@ -510,7 +510,7 @@ void Renderer::DrawTex()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_NumsTexture);
 
-	auto tex = GL_TEXTURE1;
+	int tex = GL_TEXTURE1;
 
 	for (int i = 0; i < 10; ++i)
 	{
