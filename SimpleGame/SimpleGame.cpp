@@ -26,8 +26,9 @@ void RenderScene(void)
 	// Renderer Test
 	//g_Renderer->DrawSolidRect(0, 0, 0, 4, 1, 0, 1, 1);
 	
-	//g_Renderer->DrawSolidTriangle();
-	g_Renderer->DrawTex();
+	g_Renderer->DrawDummy();
+	
+	//g_Renderer->DrawTex();
 
 	glutSwapBuffers();
 }
@@ -74,7 +75,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize Renderer
-	g_Renderer = new Renderer(500, 500);
+	g_Renderer = new Renderer(1024, 1024);
 	if (!g_Renderer->IsInitialized())
 	{
 		std::cout << "Renderer could not be initialized.. \n";

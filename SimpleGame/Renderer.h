@@ -20,6 +20,8 @@ struct Vertex {
 	float Rv;
 	float Rv2;
 	float lifetime;
+	float uvx;
+	float uvy;
 };
 
 struct FSVertex {
@@ -48,6 +50,7 @@ public:
 	void DrawSolidTriangle();
 	void DrawFS();
 	void DrawTex();
+	void DrawDummy();
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(const char* filename, std::string *target);
@@ -57,6 +60,7 @@ private:
 	void GetGLPosition(float x, float y, float *newX, float *newY);
 	void GenerateParticle(size_t particleSize);
 	void GenerateFS();
+	void GenDummyMesh(int winx, int winy);
 	GLuint CreatePngTexture(const char* filePath, GLuint samplingMethod);
 
 	bool			m_Initialized = false;
@@ -69,12 +73,16 @@ private:
 	GLuint			m_TriangleShader = 0;
 	GLuint			m_FsShader = 0;
 	GLuint			m_TxShader = 0;
+	GLuint			m_DummyShader = 0;
+	
 
 
 
 	GLuint			m_VBOTriangle = 0;
 	GLuint			m_VBOParticle = 0;
+	GLuint			VBO_DummyMesh = 0;
 	int				m_nVertices = 0;
+	int				gDummyVertexCount=0;
 
 	GLuint			m_VBOFS = 0;
 

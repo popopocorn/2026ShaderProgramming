@@ -15,13 +15,13 @@ in vec2 UV;
 void texture01()
 {
 	
-	float tx = fract(UV.x*3.0);
-	float ty = UV.y/3.0;
+	float tx = UV.x/5 * 2;
+	float ty = UV.y/2;
 	
-	float offsetX = 0;
-	float offsetY= (2 - floor(UV.x*3.0))/3;
+	float offsetX = 2.0/5.0;
+	float offsetY= 0.0/2.0;
 
-	vec2 newTex = vec2(tx, ty + offsetY);
+	vec2 newTex = vec2(tx + offsetX, ty + offsetY);
 	FragColor = texture(uTexSampler, newTex);
 }
 
@@ -128,8 +128,9 @@ void Num2()
     FragColor = texture(uTexSampler, vec2(tx + offsetX, ty + offsetY));
 }
 
+
 void main()
 {
-	Num2();
+	texture01();
 	
 }
