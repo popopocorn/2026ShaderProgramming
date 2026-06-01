@@ -51,6 +51,8 @@ public:
 	void DrawFS();
 	void DrawTex();
 	void DrawDummy();
+	void DrawDummyFBO();
+	void DrawAll();
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(const char* filename, std::string *target);
@@ -62,6 +64,8 @@ private:
 	void GenerateFS();
 	void GenDummyMesh(int winx, int winy);
 	GLuint CreatePngTexture(const char* filePath, GLuint samplingMethod);
+	void DrawTexture(GLuint texID, float x, float y, float scale, bool flip);
+	void GenFBO();
 
 	bool			m_Initialized = false;
 	
@@ -74,6 +78,7 @@ private:
 	GLuint			m_FsShader = 0;
 	GLuint			m_TxShader = 0;
 	GLuint			m_DummyShader = 0;
+	GLuint			m_TextureShader = 0;
 	
 
 
@@ -83,15 +88,27 @@ private:
 	GLuint			VBO_DummyMesh = 0;
 	int				m_nVertices = 0;
 	int				gDummyVertexCount=0;
-
 	GLuint			m_VBOFS = 0;
+	GLuint			m_VBOTX = 0;
+
 
 	std::array<Dropinfo, 1000> drops;
 
-	GLuint sampler = 0;
-	GLuint m_RgbTexture = 0;
+	GLuint			sampler = 0;
+	GLuint			m_RgbTexture = 0;
 	std::array<GLuint, 10> m_NumTexture;
-	GLuint m_NumsTexture = 0;
+	GLuint			m_NumsTexture = 0;
+	GLuint			m_PlagTexture = 0;
+
+	//fbo
+	GLuint			m_FBO = 0;
+	GLuint			m_FBO_Texture = 0;
+
+	GLuint			m_FBO_1 = 0;
+	GLuint			m_FBO_Texture_1 = 0;
+
+	GLuint			m_FBO_2 = 0;
+	GLuint			m_FBO_Texture_2 = 0;
 
 };
 

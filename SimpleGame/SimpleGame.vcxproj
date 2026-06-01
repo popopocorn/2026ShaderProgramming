@@ -184,6 +184,8 @@
     <None Include="Shaders\texture.vs" />
     <None Include="Shaders\Triangle.fs" />
     <None Include="Shaders\Triangle.vs" />
+    <None Include="Shaders\tx.fs" />
+    <None Include="Shaders\tx.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
